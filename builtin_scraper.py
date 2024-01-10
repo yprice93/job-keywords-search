@@ -15,12 +15,13 @@ BIJD_URL = "https://builtin.com"
         
 
 job_hrefs = []
-tech_stack = ["java", "spring", "mySQL", "ruby on rails", "postgres", "django", "go", "node", "kotlin", "rust", "php", "javascript", "vue", "next"]
-matching_paragraphs_collection = []
+tech_stack = ["java", "spring", "mysql", "ruby", "postgres", "django", "golang", "node", "kotlin", "rust", "php", "javascript", "vue", "next"]
+matching_paragraphs = []  # Initialize an empty list
+count = {};
 
 
 for webPage in range(1,100):
-    page = requests.get(BUILTIN_URL + "full+stack&page=" + str(webPage))
+    page = requests.get(BUILTIN_URL + "backend&page=" + str(webPage))
 
 
     soup = BeautifulSoup(page.content, 'html.parser')
@@ -33,6 +34,7 @@ for webPage in range(1,100):
         
 
 
+
 for href in job_hrefs:
     page = requests.get(BIJD_URL + href)
     soup = BeautifulSoup(page.content, 'html.parser')
@@ -40,18 +42,23 @@ for href in job_hrefs:
     paragraphs = soup.find_all('p')
 
     # Filter and save paragraphs containing specified keywords
-    matching_paragraphs = [p.text.strip() for p in paragraphs if any(keyword.lower() in p.text.lower() for keyword in tech_stack)]
-    matching_paragraphs_collection.append(matching_paragraphs)
-    
+    # Iterate over each paragraph in the list of paragraphs
+    for keyword in tech_stack:
+        # Check if at least one keyword from tech_stack is present in the lowercase paragraph text
+        if any(keyword.lower() in p.text.lower() for p in paragraphs):
+            # If true, increment the count for the current keyword
+            count = {keyword.lower(): 0 for keyword in tech_stack}
+            
+print(count)
 
     # Print or save the matching paragraphs
   
-    for i, paragraph in enumerate(matching_paragraphs_collection, 1):
-        print(f"Matching Paragraph {i}:\n{paragraph}\n")
+# for i, paragraph in enumerate(matching_paragraphs, 1):
+#     print(f"Matching Paragraph {i}:\n{paragraph}\n")
     
-    # Optionally, you can save the matching paragraphs to a file
-        with open('matching_paragraphs.txt', 'w', encoding='utf-8') as file:
-            file.write('\n\n'.join(matching_paragraphs))
+# # Optionally, you can save the matching paragraphs to a file
+#     with open('matching_paragraphs.txt', 'w', encoding='utf-8') as file:
+#         file.write('\n\n'.join(matching_paragraphs))
 
         
 
